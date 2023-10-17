@@ -30,7 +30,16 @@ export const commentsSlice = createSlice({
         state.isLoadingComments = true;
         state.failedToLoadComments = false;
       })
-      .addCase(loadCommentsForArticleId.fulfilled, (state) => {});
+      .addCase(loadCommentsForArticleId.fulfilled, (state, action) => {
+        const { articleId, comments } = action.payload;
+        state.byArticleId[articleId] = comments;
+        state.isLoadingComments = false;
+        state.failedToLoadComments = false;
+      })
+      .addCase(loadCommentsForArticleId.rejected, (state) => {
+        state.failedToLoadComments = true;
+        state.isLoadingComments = false;
+      });
   },
 });
 
