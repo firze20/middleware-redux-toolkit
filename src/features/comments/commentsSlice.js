@@ -15,7 +15,7 @@ export const loadCommentsForArticleId = createAsyncThunk(
 export const postCommentForArticleId = createAsyncThunk(
   "postCommentForArticleId",
   async ({ articleId, comment }) => {
-    const requestBody = JSON.stringify({comment: comment});
+    const requestBody = JSON.stringify({ comment: comment });
     const response = await fetch(`api/articles/${articleId}/comments`, {
       method: "POST",
       body: requestBody,
@@ -65,15 +65,13 @@ export const commentsSlice = createSlice({
         state.failedToCreateComment = true;
       })
       .addCase(postCommentForArticleId.fulfilled, (state, action) => {
-        const {articleId} = action.payload;
+        const { articleId } = action.payload;
         state.createCommentIsPending = false;
         state.failedToCreateComment = false;
         state.byArticleId[articleId].push(action.payload);
-
-      })
+      });
   },
 });
-
 
 export const selectComments = (state) => state.comments.byArticleId;
 export const isLoadingComments = (state) => state.comments.isLoadingComments;
