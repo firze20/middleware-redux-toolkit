@@ -12,8 +12,20 @@ export const loadCommentsForArticleId = createAsyncThunk(
 );
 
 // Create postCommentForArticleId here.
+export const postCommentForArticleId = createAsyncThunk(
+  "postCommentForArticleId",
+  async ({ articleId, comment }) => {
+    const requestBody = JSON.stringify({comment: comment});
+    const response = await fetch(`api/articles/${articleId}/comments`, {
+      method: "POST",
+      body: requestBody,
+    });
 
-const postCommentForArticleId = () => {};
+    const json = await response.json();
+
+    return json;
+  }
+);
 
 export const commentsSlice = createSlice({
   name: "comments",
@@ -22,10 +34,13 @@ export const commentsSlice = createSlice({
     byArticleId: {},
     isLoadingComments: false,
     failedToLoadComments: false,
+    createCommentIsPending: false,
+    failedToCreateComment: false,
   },
   // Add extraReducers here.
   extraReducers: (builder) => {
     builder
+      //loadCommentsForArticleId
       .addCase(loadCommentsForArticleId.pending, (state) => {
         state.isLoadingComments = true;
         state.failedToLoadComments = false;
@@ -39,9 +54,26 @@ export const commentsSlice = createSlice({
       .addCase(loadCommentsForArticleId.rejected, (state) => {
         state.failedToLoadComments = true;
         state.isLoadingComments = false;
-      });
+      })
+      //postCommentsforArticleId
+      .addCase(postCommentForArticleId.pending, (state) => {
+        state.createCommentIsPending = true;
+        state.failedToCreateComment = false;
+      })
+      .addCase(postCommentForArticleId.rejected, (state) => {
+        state.createCommentIsPending = false;
+        state.failedToCreateComment = true;
+      })
+      .addCase(postCommentForArticleId.fulfilled, (state, action) => {
+        const {articleId} = action.payload;
+        state.createCommentIsPending = false;
+        state.failedToCreateComment = false;
+        state.byArticleId[articleId].push(action.payload);
+
+      })
   },
 });
+
 
 export const selectComments = (state) => state.comments.byArticleId;
 export const isLoadingComments = (state) => state.comments.isLoadingComments;
