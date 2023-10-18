@@ -19,11 +19,9 @@ const Comments = () => {
 
   // Dispatch loadCommentsForArticleId with useEffect here.
   useEffect(() => {
-
-    if(article) {
+    if (article) {
       dispatch(loadCommentsForArticleId(article.id));
     }
-    
   }, [article, dispatch]);
 
   if (commentsAreLoading) return <div>Loading Comments</div>;
@@ -32,7 +30,7 @@ const Comments = () => {
   return (
     <div className="comments-container">
       <h3 className="comments-title">Comments</h3>
-      <CommentList comments={comments} />
+      <CommentList comments={commentsForArticleId} />
       <CommentForm articleId={article.id} />
     </div>
   );
